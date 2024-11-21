@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather App</h1>
+    <form id="weather-form">
+        <input type="text" name="city" placeholder="Enter city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <script>
+        document.getElementById("weather-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const city = e.target.city.value;
+            const response = await fetch("/weather", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `city=${city}`
+            });
+            const data = await response.json();
+            const resultDiv = document.getElementById("result");
+            if (data.error) {
+                resultDiv.innerHTML = `<p style="color:red;">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <h2>${data.city} - ${data.time}</h2>
+                    <p>${data.temp} | ${data.condition}</p>
+                    <p>${data.description}</p>
+                    <p>Wind: ${data.wind} m/s</p>
+                    <p>Humidity: ${data.humidity}%</p>
+                    <p>Pressure: ${data.pressure} hPa</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
